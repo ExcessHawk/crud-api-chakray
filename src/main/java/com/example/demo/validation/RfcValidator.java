@@ -5,9 +5,6 @@ import java.util.regex.Pattern;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-/**
- * Mexican RFC: 3–4 letters (persona moral / física) + 6 digits (yymmdd) + 3-character homoclave.
- */
 public class RfcValidator implements ConstraintValidator<ValidRfc, String> {
 
 	private static final Pattern RFC = Pattern.compile(
@@ -17,7 +14,7 @@ public class RfcValidator implements ConstraintValidator<ValidRfc, String> {
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		if (value == null || value.isBlank()) {
-			return true; // use with @NotBlank on create; optional on patch
+			return true;
 		}
 		return RFC.matcher(value.trim().toUpperCase()).matches();
 	}

@@ -1,48 +1,79 @@
-# crud-api-chakray — Users REST API (Spring Boot 4, Java 17+)
+# crud-api-chakray
 
-In-memory user list with sorting, filtering, AES-256-GCM password storage, RFC (Mexican tax id) and AndresFormat phone validation, OpenAPI/Swagger, and Docker packaging.
+REST API hecha con Spring Boot 4 y Java 17 para la prueba técnica de Chakray.
 
-## Run
+Guarda usuarios en memoria, tiene sorting, filtering, encriptación de passwords con AES256, validación de RFC y teléfono (AndresFormat), Swagger y Docker.
+
+## Como correrlo
+
+Necesitas tener Java 17 o 21 instalado.
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Requires `JAVA_HOME` (JDK 17 or 21). Default port: **8080**.
+Corre en el puerto 8080.
 
-- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-- OpenAPI JSON: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+- Swagger: http://localhost:8080/swagger-ui.html
+- OpenAPI json: http://localhost:8080/api-docs
 
-## Seeded users
+## Usuarios de prueba
 
-Three users are created at startup (random UUIDs). Shared login password: **`demo-password`**.
+Al iniciar la app se crean 3 usuarios automáticamente. El password de todos es `demo-password`.
 
-| tax_id (username) | email           |
-|-------------------|-----------------|
-| AARR990101XXX     | user1@mail.com  |
-| BOBB850101XXX     | user2@mail.com  |
-| CAPC900101XXX     | user3@mail.com  |
+| tax_id | email |
+|--------|-------|
+| AARR990101XXX | user1@mail.com |
+| BOBB850101XXX | user2@mail.com |
+| CAPC900101XXX | user3@mail.com |
 
-## API
+## Endpoints
 
-- `GET /users?sortedBy=email|id|name|phone|tax_id|created_at` — optional sort
-- `GET /users?filter=field+op+value` — `op` ∈ `co` (contains), `eq`, `sw` (starts with), `ew` (ends with); `filter` must not be empty when present
-- `POST /users` — create user (password encrypted; never returned)
-- `PATCH /users/{id}` — partial update
-- `DELETE /users/{id}`
-- `POST /login` — body `{ "tax_id": "...", "password": "..." }` — **401** on failure
+- `GET /users` - lista todos los usuarios
+- `GET /users?sortedBy=name` - ordena por el campo indicado (email, id, name, phone, tax_id, created_at)
+- `GET /users?filter=name+co+user` - filtra usuarios (ver ejemplos abajo)
+- `POST /users` - crea un usuario nuevo
+- `PATCH /users/{id}` - actualiza campos de un usuario
+- `DELETE /users/{id}` - elimina un usuario
+- `POST /login` - autenticación con tax_id y password
 
-### Filter examples
+### Ejemplos de filter
 
-- `/users?filter=name+co+user`
-- `/users?filter=email+ew+mail.com`
-- `/users?filter=phone+sw+555` (compares against the **10-digit national** number)
-- `/users?filter=tax_id+eq+AARR990101XXX`
+El formato es `campo+operador+valor`. Los operadores son:
+- `co` = contains
+- `eq` = equals
+- `sw` = starts with
+- `ew` = ends with
 
-## Configuration
+```
+GET /users?filter=name+co+user
+GET /users?filter=email+ew+mail.com
+GET /users?filter=phone+sw+555
+GET /users?filter=tax_id+eq+AARR990101XXX
+```
 
-- **AES-256 key**: `AES_SECRET_KEY_HEX` (64 hex chars = 32 bytes), or `app.security.aes-secret-key-hex` in `application.properties`
-- **created_at** display: **Indian/Antananarivo** (`dd-MM-yyyy HH:mm`)
+Nota: en la URL el `+` se manda como `%2B` cuando se hace con curl.
+
+### Login
+
+```
+POST /login
+Content-Type: application/json
+
+{
+  "tax_id": "AARR990101XXX",
+  "password": "demo-password"
+}
+```
+Regresa 401 si las credenciales son incorrectas.
+
+## Notas
+
+- El password nunca aparece en las respuestas
+- `created_at` se muestra en zona horaria de Madagascar (Indian/Antananarivo), formato `dd-MM-yyyy HH:mm`
+- `tax_id` debe tener formato RFC mexicano
+- El teléfono debe tener 10 dígitos nacionales (puede incluir código de país)
+- `tax_id` es único
 
 ## Docker
 

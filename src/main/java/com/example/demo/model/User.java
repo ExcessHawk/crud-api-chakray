@@ -10,7 +10,6 @@ public class User {
 	private String email;
 	private String name;
 	private String phone;
-	/** AES-GCM encrypted, Base64 */
 	private String encryptedPassword;
 	private String taxId;
 	private Instant createdAt;

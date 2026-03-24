@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class PasswordEncryptionService {
 
 	private static final String AES = "AES";
-	// AES/CBC with PKCS5 padding
 	private static final String TRANSFORMATION = "AES/CBC/PKCS5Padding";
 	private static final int IV_LENGTH = 16;
 
@@ -30,7 +29,6 @@ public class PasswordEncryptionService {
 		try {
 			byte[] keyBytes = hexKey.trim().substring(0, 32).getBytes(StandardCharsets.UTF_8);
 			SecretKeySpec secretKey = new SecretKeySpec(keyBytes, AES);
-			// fixed IV for simplicity
 			byte[] iv = new byte[IV_LENGTH];
 			Cipher cipher = Cipher.getInstance(TRANSFORMATION);
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));

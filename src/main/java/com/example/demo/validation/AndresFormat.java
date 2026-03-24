@@ -9,10 +9,6 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-/**
- * "AndresFormat": optional country code (+1–3 digits) and exactly 10 national digits;
- * separators (spaces, dashes, parentheses) allowed.
- */
 @Documented
 @Constraint(validatedBy = AndresFormatValidator.class)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })

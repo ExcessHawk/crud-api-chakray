@@ -8,7 +8,7 @@ public class AndresFormatValidator implements ConstraintValidator<AndresFormat, 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		if (value == null) {
-			return true; // optional on patch; use with @NotBlank on create
+			return true;
 		}
 		if (value.isBlank()) {
 			return false;
@@ -21,7 +21,6 @@ public class AndresFormatValidator implements ConstraintValidator<AndresFormat, 
 		if (national.length() != 10) {
 			return false;
 		}
-		// North American numbering: area code first digit 2–9 (common NANP rule)
 		char first = national.charAt(0);
 		if (first == '0' || first == '1') {
 			return false;
