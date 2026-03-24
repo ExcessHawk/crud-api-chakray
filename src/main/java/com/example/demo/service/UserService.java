@@ -1,7 +1,5 @@
 package com.example.demo.service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CreateUserRequest;
@@ -27,12 +26,12 @@ import com.example.demo.util.UserMapper;
 @Service
 public class UserService {
 
-	private final UserRepository repository;
-	private final PasswordEncryptionService passwordEncryptionService;
+	@Autowired
+	private UserRepository repository;
+	@Autowired
+	private PasswordEncryptionService passwordEncryptionService;
 
-	public UserService(UserRepository repository, PasswordEncryptionService passwordEncryptionService) {
-		this.repository = repository;
-		this.passwordEncryptionService = passwordEncryptionService;
+	public UserService() {
 	}
 
 	public List<UserResponse> list(String sortedBy, String filter) {
@@ -81,7 +80,7 @@ public class UserService {
 		}
 		if (req.getTaxId() != null) {
 			String next = req.getTaxId().trim().toUpperCase(Locale.ROOT);
-			if (!next.equalsIgnoreCase(u.getTaxId()) && repository.existsByTaxIdExcluding(next, id)) {
+			if (repository.existsByTaxIdExcluding(next, id)) {
 				throw new ConflictException("tax_id is already registered");
 			}
 			u.setTaxId(next);
@@ -102,21 +101,10 @@ public class UserService {
 		User u = repository.findByTaxId(req.getTaxId())
 				.orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 		String decrypted = passwordEncryptionService.decrypt(u.getEncryptedPassword());
-		if (!constantTimeEquals(decrypted, req.getPassword())) {
+		if (!decrypted.equals(req.getPassword())) {
 			throw new UnauthorizedException("Invalid credentials");
 		}
 		return new LoginResponse(u.getId(), "Authenticated");
-	}
-
-	private static boolean constantTimeEquals(String a, String b) {
-		try {
-			return MessageDigest.isEqual(
-					a.getBytes(StandardCharsets.UTF_8),
-					b == null ? new byte[0] : b.getBytes(StandardCharsets.UTF_8));
-		}
-		catch (Exception e) {
-			return false;
-		}
 	}
 
 	private boolean matchesFilter(User u, String filter) {

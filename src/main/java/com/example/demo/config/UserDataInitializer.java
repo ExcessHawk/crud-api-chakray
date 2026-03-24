@@ -28,9 +28,6 @@ public class UserDataInitializer implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		if (!repository.findAll().isEmpty()) {
-			return;
-		}
 		String sharedPassword = "demo-password";
 		repository.save(buildUser1(sharedPassword));
 		repository.save(buildUser2(sharedPassword));

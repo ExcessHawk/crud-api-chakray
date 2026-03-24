@@ -12,7 +12,7 @@ public class OpenApiConfig {
 	@Bean
 	public OpenAPI openAPI() {
 		return new OpenAPI().info(new Info()
-				.title("Users REST API")
+				.title("crud-api-chakray")
 				.version("1.0")
 				.description("User management with sorting, filtering, AES-256 password storage, and RFC / AndresFormat validation."));
 	}

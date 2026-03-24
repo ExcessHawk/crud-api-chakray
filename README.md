@@ -1,4 +1,4 @@
-# Users REST API (Spring Boot 4, Java 17+)
+# crud-api-chakray — Users REST API (Spring Boot 4, Java 17+)
 
 In-memory user list with sorting, filtering, AES-256-GCM password storage, RFC (Mexican tax id) and AndresFormat phone validation, OpenAPI/Swagger, and Docker packaging.
 
@@ -47,6 +47,6 @@ Three users are created at startup (random UUIDs). Shared login password: **`dem
 ## Docker
 
 ```bash
-docker build -t demo-users-api .
-docker run -p 8080:8080 demo-users-api
+docker build -t crud-api-chakray .
+docker run -p 8080:8080 crud-api-chakray
 ```
